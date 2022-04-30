@@ -1,0 +1,10 @@
+{
+  "name": "DSPStarMapMemo",
+  "version_number": "0.0.1",
+  "website_url": "https://github.com/appuns/DSPStarMapMemo",
+  "description": "This don't affect achievements or milestones. 実績やマイルストーンには影響しません。",
+  "dependencies": [
+    "CommonAPI-DSPModSave-1.1.3",
+    "xiaoye97-BepInEx-5.4.17"
+  ]
+}
