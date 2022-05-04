@@ -2,9 +2,9 @@
   "name": "DSPStarMapMemo",
   "version_number": "0.0.1",
   "website_url": "https://github.com/appuns/DSPStarMapMemo",
-  "description": "This don't affect achievements or milestones. 実績やマイルストーンには影響しません。",
+  "description": "Allows you to add descriptive text and icons for stars and planets in the star map.This don't affect achievements or milestones. 星図に星や惑星の説明用のテキストやアイコンを追加できます。実績やマイルストーンには影響しません。",
   "dependencies": [
-    "CommonAPI-DSPModSave-1.1.3",
+    "CommonAPI-DSPModSave-1.1.4",
     "xiaoye97-BepInEx-5.4.17"
   ]
 }

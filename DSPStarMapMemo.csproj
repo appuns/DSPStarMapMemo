@@ -337,6 +337,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ClickHandler.cs" />
+    <Compile Include="MemoPool.cs" />
     <Compile Include="UI.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Patch.cs" />

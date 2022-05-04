@@ -35,9 +35,11 @@ namespace DSPStarMapMemo
 
 
 
-    public class Main : BaseUnityPlugin //, IModCanSave
+    public class Main : BaseUnityPlugin , IModCanSave
     {
 
+        //public static ConfigEntry<bool> DisableKeyTips;
+        //public static ConfigEntry<bool> DisableKeyTips;
 
 
 
@@ -46,132 +48,108 @@ namespace DSPStarMapMemo
             LogManager.Logger = Logger;
             Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly());
 
-            ////configの設定
+            //configの設定
             //alwaysDisplay = Config.Bind("General", "DisableKeyTips", true, "Disable Key Tips on right side");
             //throughPlanet = Config.Bind("General", "DisableKeyTips", true, "Disable Key Tips on right side");
-            //ShowArrow = Config.Bind("General", "DisableKeyTips", true, "Disable Key Tips on right side");
-            ////maxCount = Config.Bind("General", "maxCount", 200, "Inventory Column Count");
 
-            //jsonFilePath = Path.Combine(Paths.ConfigPath, "markers.json");
 
-            ////テスト
-            ////GameMain.data.mainPlayer.gameObject.AddComponent<DynamicCreateMesh>();
-            ///
-            //LogManager.Logger.LogInfo("---------------------------------------------------------load icon");
 
             UI.Create();
         }
 
 
-        //public void Import(BinaryReader r)
-        //{
-        //    //MarkerPool.countInPlanet.Clear();
-        //    MarkerPool.markerPool.Clear();
-        //    MarkerPool.markerIdInPlanet.Clear();
+        public void Import(BinaryReader r)
+        {
+            LogManager.Logger.LogInfo("---------------------------------------------------------Import");
+            //MarkerPool.countInPlanet.Clear();
+            MemoPool.memoPool.Clear();
 
-        //    if (r.ReadInt32() == 1)
-        //    {
-        //        //markerCursorの読み込み
-        //        MarkerPool.markerCursor = r.ReadInt32();
+            if (r.ReadInt32() == 1)
+            {
 
-        //        //markerIdInPlanetの読み込み
-        //        int num = r.ReadInt32();
-        //        for (int i = 0; i < num; i++)
-        //        {
-        //            var Key = r.ReadInt32();
-        //            var num2 = r.ReadInt32();
-        //            List<int> list = new List<int>();
-        //            for (int j = 0; j < num2; j++)
-        //            {
-        //                list.Add(r.ReadInt32());
-        //            }
-        //            MarkerPool.markerIdInPlanet.Add(Key, list);
-        //        }
-        //        //markerIdInPlanetの読み込み
-        //        int num3 = r.ReadInt32();
-        //        for (int i = 0; i < num3; i++)
-        //        {
-        //            var Key = r.ReadInt32();
-        //            MarkerPool.Marker marker = new MarkerPool.Marker();
-        //            marker.planetID = r.ReadInt32();
-        //            marker.pos.x = r.ReadSingle();
-        //            marker.pos.y = r.ReadSingle();
-        //            marker.pos.z = r.ReadSingle();
-        //            marker.icon1ID = r.ReadInt32();
-        //            marker.icon2ID = r.ReadInt32();
-        //            marker.color.r = r.ReadSingle();
-        //            marker.color.g = r.ReadSingle();
-        //            marker.color.b = r.ReadSingle();
-        //            marker.color.a = r.ReadSingle();
-        //            marker.desc = r.ReadString();
-        //            marker.alwaysDisplay = r.ReadBoolean();
-        //            marker.throughPlanet = r.ReadBoolean();
-        //            marker.ShowArrow = r.ReadBoolean();
-        //            MarkerPool.markerPool.Add(Key, marker);
-        //        }
-        //        MarkerPool.Refresh();
-        //        MarkerList.Refresh();
-        //    }
-        //    else
-        //    {
-        //        LogManager.Logger.LogInfo("Save data version error");
-        //    }
+                //markerIdInPlanetの読み込み
+                int num3 = r.ReadInt32();
+                LogManager.Logger.LogInfo("---------------------------------------------------num3 : " + num3);
 
-        //    //MarkerList.Reset();
+                for (int j = 0; j < num3; j++)
+                {
+                    var Key = r.ReadInt32();
+                    LogManager.Logger.LogInfo("---------------------------------------------------Key : " + Key);
+                    MemoPool.Memo newMemo = new MemoPool.Memo();
+                    newMemo.signalIconId = new int[10];
 
-        //}
+                    newMemo.id = r.ReadInt32();
+                    LogManager.Logger.LogInfo("----------------------------------------- --newMemo.id : " + newMemo.id);
+                    newMemo.desc = r.ReadString();
+                    LogManager.Logger.LogInfo("------------------------------------------newMemo.desc : " + newMemo.desc);
+                    newMemo.color.r = r.ReadSingle();
+                    newMemo.color.g = r.ReadSingle();
+                    newMemo.color.b = r.ReadSingle();
+                    newMemo.color.a = r.ReadSingle();
+                    LogManager.Logger.LogInfo("-----------------------------------------newMemo.color : " + newMemo.color);
+                    for (int i = 0; i < 10; i++)
+                    {
+                        newMemo.signalIconId[i] = r.ReadInt32();
+                        LogManager.Logger.LogInfo("-------------------------------newMemo.signalIconId[i] : " + newMemo.signalIconId[i]);
+                    }
+                    MemoPool.memoPool.Add(Key, newMemo);
+                }
+            }
+            else
+            {
+                LogManager.Logger.LogInfo("Save data version error");
+            }
 
-        //public void Export(BinaryWriter w)
-        //{
-        //    LogManager.Logger.LogInfo("---------------------------------------------------------Export");
-        //    w.Write(1); //セーブデータバージョン
-        //    //markerCursorの書き込み
-        //    w.Write(MarkerPool.markerCursor);
-        //    //markerIdInPlanetの書き込み
-        //    w.Write(MarkerPool.markerIdInPlanet.Count);
-        //    foreach (KeyValuePair<int, List<int>> keyValuePair in MarkerPool.markerIdInPlanet)
-        //    {
-        //        w.Write(keyValuePair.Key);
-        //        w.Write(keyValuePair.Value.Count);
-        //        foreach (int markerId in keyValuePair.Value)
-        //        {
-        //            w.Write(markerId);
-        //        }
+            LogManager.Logger.LogInfo("-------------------------------------------------------------memoPool.Count : " + MemoPool.memoPool.Count);
 
-        //    }
-        //    //markerPoolの書き込み
-        //    w.Write(MarkerPool.markerPool.Count);
-        //    foreach (KeyValuePair<int, MarkerPool.Marker> keyValuePair in MarkerPool.markerPool)
-        //    {
-        //        w.Write(keyValuePair.Key);
-        //        w.Write(keyValuePair.Value.planetID);
-        //        w.Write(keyValuePair.Value.pos.x);
-        //        w.Write(keyValuePair.Value.pos.y);
-        //        w.Write(keyValuePair.Value.pos.z);
-        //        w.Write(keyValuePair.Value.icon1ID);
-        //        w.Write(keyValuePair.Value.icon2ID);
-        //        w.Write(keyValuePair.Value.color.r);
-        //        w.Write(keyValuePair.Value.color.g);
-        //        w.Write(keyValuePair.Value.color.b);
-        //        w.Write(keyValuePair.Value.color.a);
-        //        w.Write(keyValuePair.Value.desc);
-        //        w.Write(keyValuePair.Value.alwaysDisplay);
-        //        w.Write(keyValuePair.Value.throughPlanet);
-        //        w.Write(keyValuePair.Value.ShowArrow);
-        //    }
+            foreach (KeyValuePair<int, MemoPool.Memo> kvp in MemoPool.memoPool)
+            {
+                LogManager.Logger.LogInfo("---------------------------------------------------Key : " + kvp.Key);
+                LogManager.Logger.LogInfo("----------------------------------------------Value.id : " + kvp.Value.id);
+                LogManager.Logger.LogInfo("--------------------------------------------Value.desc : " + kvp.Value.desc);
+                for (int i = 0; i < 10; i++)
+                {
+                    LogManager.Logger.LogInfo("---------------------------------Value.signalIconId[" + i + "] : " + kvp.Value.signalIconId[i]);
+                }
 
-        //}
+            }
 
-        //public void IntoOtherSave()
-        //{
-        //    if (MarkerPool.markerPool.Count > 0)
-        //    {
-        //        MarkerPool.markerIdInPlanet.Clear();
-        //        MarkerPool.markerPool.Clear();
-        //        MarkerPool.Refresh();
-        //        MarkerList.Refresh();
-        //    }
-        //}
+
+
+        }
+
+        public void Export(BinaryWriter w)
+        {
+            LogManager.Logger.LogInfo("---------------------------------------------------------Export");
+            w.Write(1); //セーブデータバージョン
+            w.Write(MemoPool.memoPool.Count);
+            for (int j = 0; j < MemoPool.memoPool.Count; j++)
+            {
+                foreach (KeyValuePair<int, MemoPool.Memo> keyValuePair in MemoPool.memoPool)
+                {
+                    w.Write(keyValuePair.Key);
+                    w.Write(keyValuePair.Value.id);
+                    w.Write(keyValuePair.Value.desc);
+                    w.Write(keyValuePair.Value.color.r);
+                    w.Write(keyValuePair.Value.color.g);
+                    w.Write(keyValuePair.Value.color.b);
+                    w.Write(keyValuePair.Value.color.a);
+                    for (int i = 0; i < 10; i++)
+                    {
+                        w.Write(keyValuePair.Value.signalIconId[i]);
+                    }
+                }
+            }
+
+        }
+
+        public void IntoOtherSave()
+        {
+            if (MemoPool.memoPool.Count > 0)
+            {
+                MemoPool.memoPool.Clear();
+            }
+        }
     }
 
 
