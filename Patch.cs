@@ -47,15 +47,13 @@ namespace DSPStarMapMemo
             showMemo(__instance.planet.id, __instance.transform);
         }
 
-
-
         public static void showMemo(int id, Transform tr)
         {
             bool keyCheck = Input.GetKey(KeyCode.LeftControl);
             GameObject memoBase = tr.Find("memoBase").gameObject;
             if (!keyCheck)
             {
-                if (MemoPool.memoPool.ContainsKey(id))
+                if (MemoPool.memoPool.ContainsKey(id) && tr.Find("name-text").gameObject.activeSelf)
                 {
                     GameObject memoText = tr.Find("memoBase/memoText").gameObject;
                     memoText.GetComponent<Text>().text = MemoPool.memoPool[id].desc;
@@ -88,7 +86,6 @@ namespace DSPStarMapMemo
             }
         }
 
-
         //「イカロス」の位置調整
         [HarmonyPostfix]
         [HarmonyPatch(typeof(UIStarmap), "_OnLateUpdate")]
@@ -96,7 +93,6 @@ namespace DSPStarMapMemo
         {
             //__instance.playerNameText.gameObject.SetActive(false);
             __instance.playerNameText.rectTransform.anchoredPosition = __instance.playerNameText.rectTransform.anchoredPosition - new Vector2(70,0);
-
         }
 
         //情報ウインドウの表示 star
@@ -151,6 +147,7 @@ namespace DSPStarMapMemo
             UI.memoWindow.transform.localPosition = __instance.transform.localPosition - new Vector3(0, __instance.GetComponent<RectTransform>().sizeDelta.y + 40, 0);
         }
 
+        //keyTipの表示
         [HarmonyPrefix, HarmonyPatch(typeof(UIKeyTips), "UpdateTipDesiredState")]
         public static void UpdateTipDesiredStatePatch(UIKeyTips __instance, ref List<UIKeyTipNode> ___allTips)
         {
