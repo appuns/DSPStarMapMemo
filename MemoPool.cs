@@ -38,7 +38,6 @@ namespace DSPStarMapMemo
 
         public static void AddOrUpdate()
         {
-
             int key = 0;
             if (UIRoot.instance.uiGame.starDetail.active)
             {
@@ -59,13 +58,6 @@ namespace DSPStarMapMemo
                 tempMemo.signalIconId[i] = UI.memo.signalIconId[i];
             }
 
-            //LogManager.Logger.LogInfo("-------------------------------------------------------------memo.id : " + memo.id);
-            //LogManager.Logger.LogInfo("-------------------------------------------------------------memo.desc : " + memo.desc);
-            //LogManager.Logger.LogInfo("-------------------------------------------------------------memo.color : " + memo.color);
-            //for (int i = 0; i < 10; i++)
-            //{
-            //    LogManager.Logger.LogInfo("-------------------------------------------------------------memo.signalIconId["+ i + "] : " + memo.signalIconId[i]);
-            //}
             if (memoPool.ContainsKey(key))
             {
                 memoPool[key] = tempMemo;
@@ -74,22 +66,6 @@ namespace DSPStarMapMemo
             {
                 memoPool.Add(key, tempMemo);
             }
-
-
-            //LogManager.Logger.LogInfo("-------------------------------------------------------------memoPool.Count : " + MemoPool.memoPool.Count);
-
-            //foreach (KeyValuePair<int, MemoPool.Memo> kvp in MemoPool.memoPool)
-            //{
-            //    LogManager.Logger.LogInfo("---------------------------------------------------Key : " + kvp.Key);
-            //    LogManager.Logger.LogInfo("----------------------------------------------Value.id : " + kvp.Value.id);
-            //    LogManager.Logger.LogInfo("--------------------------------------------Value.desc : " + kvp.Value.desc);
-            //    for (int i = 0; i < 10; i++) 
-            //    {
-            //        LogManager.Logger.LogInfo("---------------------------------Value.signalIconId[" + i + "] : " + kvp.Value.signalIconId[i]);
-            //    }
-
-            //}
-
         }
     }
 }

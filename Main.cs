@@ -37,22 +37,10 @@ namespace DSPStarMapMemo
 
     public class Main : BaseUnityPlugin , IModCanSave
     {
-
-        //public static ConfigEntry<bool> DisableKeyTips;
-        //public static ConfigEntry<bool> DisableKeyTips;
-
-
-
         public void Start()
         {
             LogManager.Logger = Logger;
             Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly());
-
-            //configの設定
-            //alwaysDisplay = Config.Bind("General", "DisableKeyTips", true, "Disable Key Tips on right side");
-            //throughPlanet = Config.Bind("General", "DisableKeyTips", true, "Disable Key Tips on right side");
-
-
 
             UI.Create();
         }
@@ -60,37 +48,25 @@ namespace DSPStarMapMemo
 
         public void Import(BinaryReader r)
         {
-            LogManager.Logger.LogInfo("---------------------------------------------------------Import");
-            //MarkerPool.countInPlanet.Clear();
             MemoPool.memoPool.Clear();
 
-            if (r.ReadInt32() == 1)
+            if (r.ReadInt32() == 1)  //セーブデータバージョンチェック
             {
-
-                //markerIdInPlanetの読み込み
                 int num3 = r.ReadInt32();
-                LogManager.Logger.LogInfo("---------------------------------------------------num3 : " + num3);
-
                 for (int j = 0; j < num3; j++)
                 {
                     var Key = r.ReadInt32();
-                    LogManager.Logger.LogInfo("---------------------------------------------------Key : " + Key);
                     MemoPool.Memo newMemo = new MemoPool.Memo();
                     newMemo.signalIconId = new int[10];
-
                     newMemo.id = r.ReadInt32();
-                    LogManager.Logger.LogInfo("----------------------------------------- --newMemo.id : " + newMemo.id);
                     newMemo.desc = r.ReadString();
-                    LogManager.Logger.LogInfo("------------------------------------------newMemo.desc : " + newMemo.desc);
                     newMemo.color.r = r.ReadSingle();
                     newMemo.color.g = r.ReadSingle();
                     newMemo.color.b = r.ReadSingle();
                     newMemo.color.a = r.ReadSingle();
-                    LogManager.Logger.LogInfo("-----------------------------------------newMemo.color : " + newMemo.color);
                     for (int i = 0; i < 10; i++)
                     {
                         newMemo.signalIconId[i] = r.ReadInt32();
-                        LogManager.Logger.LogInfo("-------------------------------newMemo.signalIconId[i] : " + newMemo.signalIconId[i]);
                     }
                     MemoPool.memoPool.Add(Key, newMemo);
                 }
@@ -100,27 +76,11 @@ namespace DSPStarMapMemo
                 LogManager.Logger.LogInfo("Save data version error");
             }
 
-            LogManager.Logger.LogInfo("-------------------------------------------------------------memoPool.Count : " + MemoPool.memoPool.Count);
-
-            foreach (KeyValuePair<int, MemoPool.Memo> kvp in MemoPool.memoPool)
-            {
-                LogManager.Logger.LogInfo("---------------------------------------------------Key : " + kvp.Key);
-                LogManager.Logger.LogInfo("----------------------------------------------Value.id : " + kvp.Value.id);
-                LogManager.Logger.LogInfo("--------------------------------------------Value.desc : " + kvp.Value.desc);
-                for (int i = 0; i < 10; i++)
-                {
-                    LogManager.Logger.LogInfo("---------------------------------Value.signalIconId[" + i + "] : " + kvp.Value.signalIconId[i]);
-                }
-
-            }
-
-
-
         }
 
         public void Export(BinaryWriter w)
         {
-            LogManager.Logger.LogInfo("---------------------------------------------------------Export");
+            //LogManager.Logger.LogInfo("---------------------------------------------------------Export");
             w.Write(1); //セーブデータバージョン
             w.Write(MemoPool.memoPool.Count);
             for (int j = 0; j < MemoPool.memoPool.Count; j++)

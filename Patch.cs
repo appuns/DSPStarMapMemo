@@ -31,24 +31,17 @@ namespace DSPStarMapMemo
         public static UIKeyTipNode ctrlToHideStarMemo = new UIKeyTipNode();
         public static bool showMemoFlag = true;
 
-
-
         //恒星メモの表示
         [HarmonyPostfix]
-        //[HarmonyPatch(typeof(UIStarmapStar), "_OnInit")]
         [HarmonyPatch(typeof(UIStarmapStar), "_OnLateUpdate")]
-        //[HarmonyPatch(typeof(UIStarmapStar), "OnStarDisplayNameChange")]
         public static void UIStarmapStar_OnInit_Postfix(UIStarmapStar __instance)
         {
             showMemo(__instance.star.id, __instance.transform);
-
         }
 
         //惑星メモの表示
         [HarmonyPostfix]
-        //[HarmonyPatch(typeof(UIStarmapPlanet), "_OnInit")]
         [HarmonyPatch(typeof(UIStarmapPlanet), "_OnLateUpdate")]
-        //[HarmonyPatch(typeof(UIStarmapPlanet), "OnPlanetDisplayNameChange")]
         public static void UIStarmapPlanet_OnInit_Postfix(UIStarmapPlanet __instance)
         {
             showMemo(__instance.planet.id, __instance.transform);
@@ -59,28 +52,20 @@ namespace DSPStarMapMemo
         public static void showMemo(int id, Transform tr)
         {
             bool keyCheck = Input.GetKey(KeyCode.LeftControl);
-            //LogManager.Logger.LogInfo("----------------------------------------------keyCheck" + keyCheck);
-            //if (keyCheck)
-            //{
-            //    showMemoFlag = !showMemoFlag;
-            //    LogManager.Logger.LogInfo("----------------------------------------------LeftControl : " + showMemoFlag);
-            //}
-            GameObject memoText = tr.Find("name-text/memoText").gameObject;
+            GameObject memoBase = tr.Find("memoBase").gameObject;
             if (!keyCheck)
             {
                 if (MemoPool.memoPool.ContainsKey(id))
                 {
-                    //memoText.GetComponent<Text>().text = __instance.planet.displayName + " : " + __instance.planet.id; // MemoPool.memoPool[__instance.planet.id].desc;
+                    GameObject memoText = tr.Find("memoBase/memoText").gameObject;
                     memoText.GetComponent<Text>().text = MemoPool.memoPool[id].desc;
                     memoText.SetActive(true);
                     for (int i = 0; i < 10; i++)
                     {
                         int signalIconId = MemoPool.memoPool[id].signalIconId[i];
-                        GameObject icon = tr.Find("name-text/icon" + i).gameObject;
+                        GameObject icon = tr.Find("memoBase/icon" + i).gameObject;
                         if (signalIconId != 0)
                         {
-                            //LogManager.Logger.LogInfo("----------------------------------------------signalIconId" + i + " : " + signalIconId);
-
                             icon.GetComponent<Image>().sprite = LDB.signals.IconSprite(signalIconId);
                             icon.SetActive(true);
                         }
@@ -89,25 +74,28 @@ namespace DSPStarMapMemo
                             icon.SetActive(false);
                         }
                     }
-                }else
+                    memoBase.transform.localPosition = tr.Find("name-text").localPosition;
+                    memoBase.SetActive(true);
+                }
+                else
                 {
-                    memoText.SetActive(false);
+                    memoBase.SetActive(false);
                 }
             }
             else
             {
-                memoText.SetActive(false);
+                memoBase.SetActive(false);
             }
         }
 
 
-        //「イカロス」の非表示
+        //「イカロス」の位置調整
         [HarmonyPostfix]
         [HarmonyPatch(typeof(UIStarmap), "_OnLateUpdate")]
         public static void UIStarmap_OnLateUpdate_Postfix(UIStarmap __instance)
         {
-
-            __instance.playerNameText.gameObject.SetActive(false);
+            //__instance.playerNameText.gameObject.SetActive(false);
+            __instance.playerNameText.rectTransform.anchoredPosition = __instance.playerNameText.rectTransform.anchoredPosition - new Vector2(70,0);
 
         }
 
@@ -116,17 +104,15 @@ namespace DSPStarMapMemo
         [HarmonyPatch(typeof(UIStarDetail), "_OnOpen")]
         public static void UIStarDetail_OnOpen_Postfix(UIStarDetail __instance)
         {
-
             UI.MemoWindowOpen(__instance.star.id);
-
         }
+
         //情報ウインドウの表示 planet
         [HarmonyPostfix]
         [HarmonyPatch(typeof(UIPlanetDetail), "_OnOpen")]
         public static void UIPlanetDetail_OnOpen_Postfix(UIPlanetDetail __instance)
         {
             UI.MemoWindowOpen(__instance.planet.id);
-
         }
 
         //情報ウインドウの非表示
@@ -135,13 +121,10 @@ namespace DSPStarMapMemo
         [HarmonyPatch(typeof(UIPlanetDetail), "_OnClose")]
         public static void UIStarDetail_OnClose_Postfix()
         {
-
-
             if (UIRoot.instance.uiGame.starDetail.active || UIRoot.instance.uiGame.planetDetail.active)
             {
                 return;
             }
-
             UI.memo.color = Color.white;
             UI.memo.id = 0;
             UI.memo.desc = "";
@@ -158,7 +141,6 @@ namespace DSPStarMapMemo
         public static void UIStarDetail_RefreshDynamicProperties_Postfix(UIStarDetail __instance)
         {
             UI.memoWindow.transform.localPosition = __instance.transform.localPosition - new Vector3(0, __instance.GetComponent<RectTransform>().sizeDelta.y + 40 , 0);
-
         }
 
         //情報ウインドウの更新 planet
@@ -167,35 +149,8 @@ namespace DSPStarMapMemo
         public static void UIPlanetDetail_RefreshDynamicProperties_Postfix(UIPlanetDetail __instance)
         {
             UI.memoWindow.transform.localPosition = __instance.transform.localPosition - new Vector3(0, __instance.GetComponent<RectTransform>().sizeDelta.y + 40, 0);
-
         }
 
-        //KeyTipを表示
-        //[HarmonyPostfix]
-        //[HarmonyPatch(typeof(UIStarmap), "_OnOpen")]
-        //public static void UIStarmap_OnOpen_Postfix()
-        //{
-        //    LogManager.Logger.LogInfo("-------------------------------------------------UIStarmap : _OnOpen1");
-
-        //    UI.ctrlToHideStarMemo.desired = true;
-        //    LogManager.Logger.LogInfo("-------------------------------------------------UIStarmap : _OnOpen2");
-        //}
-
-        ////KeyTipを非表示
-        //[HarmonyPostfix]
-        //[HarmonyPatch(typeof(UIKeyTips), "UpdateTipDesiredState")]
-        //public static void UIKeyTips_UpdateTipDesiredState_Postfix(UIKeyTips __instance)
-        //{
-        //    if (UIRoot.instance.uiGame.starmap.active && !UIRoot.instance.uiGame.starDetail.active || !UIRoot.instance.uiGame.planetDetail.active)
-        //    {
-        //        __instance.mouseLeftInBuildModeX.desired = true;
-        //        //UI.ctrlToHideStarMemo.desired = true;
-        //    }
-        //    else
-        //    {
-        //        //UI.ctrlToHideStarMemo.desired = false;
-        //    }
-        //}
         [HarmonyPrefix, HarmonyPatch(typeof(UIKeyTips), "UpdateTipDesiredState")]
         public static void UpdateTipDesiredStatePatch(UIKeyTips __instance, ref List<UIKeyTipNode> ___allTips)
         {

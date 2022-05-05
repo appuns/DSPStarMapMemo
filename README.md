@@ -7,21 +7,22 @@ Allows you to add memos for stars and planets in the star map.This don't affect 
 You can add descriptive text and icons for stars and planets.
 You can edit those in the memo window below the details window in the star map.
 You must show the star label to display the memo.
-Icarus's name will not be displayed as it will interfere with the memo.
+Moved Icarus's name  because it interfere with the memo.
+You can hide the memo by pressing left [CTRL] key.
+
 星図の星や惑星の説明用のテキストやアイコンを追加できます。
 星図の詳細ウィンドウの下にあるメモウィンドウで編集できます。
 メモを表示するには、星のラベルを表示する必要があります。
-イカロスの名前はメモの邪魔になるので表示されません。
+メモの邪魔になるのでイカルスの名前を移動しました。
+左[CTRL]キーを押すと、メモを非表示にできます。
 
 ## How to install インストール方法
 1. Install BepInEx<br>
 2. Drag DSPStarMapMemo.dll into steamapps/common/Dyson Sphere Program/BepInEx/plugins<br>
-
 It's easier to use the mod manager "r2modman".
 
 1. BepInExをインストールします。<br>
 2. DSPStarMapMemo.dllをsteamapps/common/Dyson Sphere Program/BepInEx/pluginsに配置します。<br>
-
 MODマネージャの「r2modman」を使うと簡単です。
 
 ## Contact 問い合わせ先
