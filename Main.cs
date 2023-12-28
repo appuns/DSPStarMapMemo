@@ -29,7 +29,7 @@ using crecheng.DSPModSave;
 namespace DSPStarMapMemo
 {
 
-    [BepInPlugin("Appun.DSP.plugin.StarMapMemo", "DSPStarMapMemo", "0.0.1")]
+    [BepInPlugin("Appun.DSP.plugin.StarMapMemo", "DSPStarMapMemo", "0.0.4")]
     [BepInProcess("DSPGAME.exe")]
     [BepInDependency(DSPModSavePlugin.MODGUID)]
 

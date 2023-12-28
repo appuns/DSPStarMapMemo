@@ -1,5 +1,5 @@
 # DSP StarMapMemo
-Allows you to add memos for stars and planets in the star map.This don't affect achievements or milestones. <br>
+Allows you to add memos for stars and planets in the star map.This doesn't affect achievements or milestones. <br>
 星図に星や惑星にメモを追加できます。実績やマイルストーンには影響しません。<br>
 
 <br>
@@ -30,6 +30,14 @@ If you have any problems or suggestions, please contact DISCORD MSP Modding serv
 不具合、改善案などありましたら、DISCORD「DysonSphereProgram_Jp」サーバー**Appun#8284**に連絡、または、GitHubの該当リポジトリでIssueを作成してください。<br>
 
 ## Change Log 更新履歴
+### v0.0.4
+- Supported the game Version 0.10.28.21011. ゲームバージョン0.10.28.21011に対応しました。
+### v0.0.3
+- Fixed a bug that memo could not be edited. メモが編集できないバグを修正しました。
+### v0.0.2
+- Deleted a key tip. キーのヒントを削除しました。
+- Made "no Icon" button in the icon selection window. アイコン選択ウインドウに「アイコン無し」ボタンを作りました。
+- Resolved interference with the UI of other mods. 他のMODのUIとの干渉を解決しました。
 ### v0.0.1
 - Released リリースしました。
 - Published in GitHub. GitHubに公開しました。

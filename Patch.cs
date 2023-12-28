@@ -148,14 +148,14 @@ namespace DSPStarMapMemo
         }
 
         //keyTipの表示
-        [HarmonyPrefix, HarmonyPatch(typeof(UIKeyTips), "UpdateTipDesiredState")]
-        public static void UpdateTipDesiredStatePatch(UIKeyTips __instance, ref List<UIKeyTipNode> ___allTips)
-        {
-            if (!ctrlToHideStarMemo)
-            {
-                ctrlToHideStarMemo = UIRoot.instance.uiGame.keyTips.RegisterTip("CTRL", "Press [CTRL] to hide star memo.".Translate());
-            }
-            ctrlToHideStarMemo.desired = UIGame.viewMode == EViewMode.Starmap && !UIRoot.instance.uiGame.starDetail.active && !UIRoot.instance.uiGame.planetDetail.active;
-        }
+        //[HarmonyPrefix, HarmonyPatch(typeof(UIKeyTips), "UpdateTipDesiredState")]
+        //public static void UpdateTipDesiredStatePatch(UIKeyTips __instance, ref List<UIKeyTipNode> ___allTips)
+        //{
+        //    if (!ctrlToHideStarMemo)
+        //    {
+        //        ctrlToHideStarMemo = UIRoot.instance.uiGame.keyTips.RegisterTip("CTRL", "Press [CTRL] to hide star memo.".Translate());
+        //    }
+        //    ctrlToHideStarMemo.desired = UIGame.viewMode == EViewMode.Starmap && UIGame.viewMode == EViewMode.Build && !UIRoot.instance.uiGame.starDetail.active && !UIRoot.instance.uiGame.planetDetail.active;
+        //}
     }
 }

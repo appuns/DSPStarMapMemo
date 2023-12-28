@@ -6,7 +6,7 @@ using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using System.Reflection.Emit;
 using System.Collections.Generic;
-using System.ComponentModel;
+//using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System;
@@ -36,6 +36,11 @@ namespace DSPStarMapMemo
         public static GameObject memoWindow;
         public static GameObject descBox;
         public static GameObject explainText;
+
+        //public static GameObject iconPicker = new GameObject();
+        public static GameObject emptyButton = new GameObject();
+        //public static bool IconSelectMode;
+
         public static Sprite emptySprite;
         public static int selectedIconNo;
         public static MemoPool.Memo memo;
@@ -55,6 +60,10 @@ namespace DSPStarMapMemo
             //アイコンとメモテキスト作成 starmap-star
             GameObject nameText = GameObject.Find("UI Root/Overlay Canvas/In Game/Starmap UIs/Starmap Screen/starmap-star-ui/name-text");
 
+            //GameObject starmapStarUI = UIRoot.instance.uiGame.starmap.focusStar.gameObject;
+            //GameObject nameText = starmapStarUI.transform.Find("name-text").gameObject;
+
+//            memoBase.transform.parent = starmapStarUI.transform;
             memoBase.transform.parent = nameText.transform.parent;
             memoBase.name = "memoBase";
             memoBase.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
@@ -80,7 +89,8 @@ namespace DSPStarMapMemo
             }
 
             //アイコンとメモテキスト作成 starmap-planet
-            GameObject memoBase2 = Instantiate(memoBase,GameObject.Find("UI Root/Overlay Canvas/In Game/Starmap UIs/Starmap Screen/starmap-planet-ui").transform);
+            //GameObject memoBase2 = Instantiate(memoBase, UIRoot.instance.uiGame.planetDetail.transform);
+            GameObject memoBase2 = Instantiate(memoBase, GameObject.Find("UI Root/Overlay Canvas/In Game/Starmap UIs/Starmap Screen/starmap-planet-ui").transform);
             memoBase2.name = "memoBase";
             for (int i = 0; i < 10; i++)
             {
@@ -89,11 +99,17 @@ namespace DSPStarMapMemo
             }
 
             //メモ編集ウインドウ作成
-            GameObject planetdetailwindow = GameObject.Find("UI Root/Overlay Canvas/In Game/Planet & Star Details/planet-detail-ui");
+            GameObject planetdetailwindow = UIRoot.instance.uiGame.planetDetail.gameObject;
             memoWindow = Instantiate(planetdetailwindow, planetdetailwindow.transform.parent);
+            //不要なオブジェクト等の削除
+            var keepTransformList = new List<string> { "black-bg" , "type-text" };
+            var keepComponentList = new List<Type>() { typeof(RectTransform) };
+            DestroyChildren(memoWindow.transform, keepTransformList, keepComponentList);
+
             memoWindow.name = "memoWindow";
             memoWindow.transform.localPosition = new Vector3(0, -300, 0);
             GameObject typeText = memoWindow.transform.Find("type-text").gameObject;
+            Destroy(typeText.transform.Find("tip-btn").gameObject);
             typeText.transform.localPosition = new Vector3(-240, -3, 0);
             typeText.name = "typeText";
             typeText.GetComponent<Text>().text = "Memo".Translate();
@@ -104,16 +120,15 @@ namespace DSPStarMapMemo
             explainText.transform.localPosition = new Vector3(-240, -190, 0);
             explainText.GetComponent<Text>().text = "Press [Enter] to insert a line break.".Translate();
             explainText.GetComponent<Text>().resizeTextMaxSize = 20;
-
-            Destroy(memoWindow.GetComponent<UIPlanetDetail>());
-            Destroy(memoWindow.transform.Find("res-group").gameObject);
-            Destroy(memoWindow.transform.Find("param-group").gameObject);
-            Destroy(memoWindow.transform.Find("name-input").gameObject);
-            Destroy(memoWindow.transform.Find("icon").gameObject);
-            Destroy(memoWindow.transform.Find("bg").gameObject);
+            explainText.SetActive(false);
 
             //テキスト編集ボックスの作成
             descBox = Instantiate(UIRoot.instance.uiGame.blueprintBrowser.inspector.descTextInput.gameObject, memoWindow.transform);
+            //不要なオブジェクト等の削除
+            keepTransformList = new List<string> { "value-text" };
+            keepComponentList = new List<Type>() { typeof(RectTransform), typeof(InputField), typeof(Image) };
+            DestroyChildren(descBox.transform, keepTransformList, keepComponentList);
+
             descBox.GetComponent<RectTransform>().anchorMax = new Vector2(0, 1);
             descBox.name = "descBox";
 
@@ -121,7 +136,7 @@ namespace DSPStarMapMemo
             descBox.transform.localPosition = new Vector3(-250, -80, 0);
             descBox.transform.localScale = new Vector3(0.87f, 0.87f, 0.87f);
             descBox.GetComponent<RectTransform>().sizeDelta = new Vector3(300, 120, 0);
-            Destroy(descBox.GetComponent<UIButton>());
+            //Destroy(descBox.GetComponent<UIButton>());
 
             Text valueText = descBox.transform.Find("value-text").GetComponent<Text>();
             valueText.alignment = TextAnchor.UpperLeft;
@@ -154,6 +169,27 @@ namespace DSPStarMapMemo
                 iconBox[i].GetComponent<Button>().onClick.AddListener(() => OnClickIconBox(iconNo));
             }
             descBox.GetComponent<InputField>().onEndEdit.AddListener(new UnityAction<string>(onEndEditDescBox));
+
+
+            //iconPicker = Instantiate(UIRoot.instance.uiGame.signalPicker.gameObject, UIRoot.instance.uiGame.signalPicker.transform.parent);
+
+            //next&previousボタンの追加
+            emptyButton = Instantiate(UIRoot.instance.uiGame.assemblerWindow.copyButton.gameObject, UIRoot.instance.uiGame.signalPicker.transform);
+            emptyButton.GetComponent<RectTransform>().sizeDelta = new Vector2(40, 40);
+            //emptyButton.GetComponent<RectTransform>().anchoredPosition = new Vector3(0, 0, 0);
+            emptyButton.transform.localPosition = new Vector3(575, -60, 0);
+
+            emptyButton.transform.Find("Text").GetComponent<Text>().alignment = TextAnchor.MiddleCenter;
+            emptyButton.transform.Find("Text").GetComponent<Text>().lineSpacing = 0.8f;
+            emptyButton.transform.Find("Text").GetComponent<Text>().fontSize = 12;
+            emptyButton.transform.Find("Text").GetComponent<Text>().text = "No\nIcon".Translate();
+            Destroy(emptyButton.transform.Find("Text").GetComponent<Localizer>());
+            Destroy(emptyButton.GetComponent<UIButton>());
+            emptyButton.name = "emptyButton";
+            emptyButton.SetActive(false);
+            emptyButton.GetComponent<Button>().onClick.AddListener(onEmptyButton);
+
+
         }
 
         //説明文が更新されたら
@@ -171,6 +207,7 @@ namespace DSPStarMapMemo
             {
                 return;
             }
+            emptyButton.SetActive(true);//IconSelectMode = true;
             selectedIconNo = iconNo;
             UISignalPicker.Popup(new Vector2(50f, 350f), new Action<int>(onIconBoxChanged));
         }
@@ -181,7 +218,18 @@ namespace DSPStarMapMemo
             iconBox[selectedIconNo].GetComponent<Image>().sprite = LDB.signals.IconSprite(signalId);
             memo.signalIconId[selectedIconNo] = signalId;
             MemoPool.AddOrUpdate();
+            emptyButton.SetActive(false);// IconSelectMode = false;
         }
+
+        //EmptyButtonを押したら
+        public static void onEmptyButton()
+        {
+            UISignalPicker.Close();
+            iconBox[selectedIconNo].GetComponent<Image>().sprite = emptySprite;
+            memo.signalIconId[selectedIconNo] = 0;
+            MemoPool.AddOrUpdate();
+        }
+
 
         public static void MemoWindowOpen(int key)
         {
@@ -221,5 +269,31 @@ namespace DSPStarMapMemo
             }
             memoWindow.SetActive(true);
         }
+
+        public static void DestroyChildren(Transform transform, List<string> keepTransformList, List<Type> keepComponentList)
+        {
+            foreach (Transform child in transform)
+            {
+                LogManager.Logger.LogInfo("Transform: " + child.name);
+                if (keepTransformList.Contains(child.name))
+                {
+                    continue;
+                }
+                GameObject.Destroy(child.gameObject);
+                LogManager.Logger.LogInfo("destroy: " + child.name);
+            }
+            foreach (Component child in transform.GetComponents<Component>())
+            {
+                LogManager.Logger.LogInfo("Component: " + child);
+                if (keepComponentList.Contains(child.GetType()))
+                {
+                    continue;
+                }
+                GameObject.Destroy(child);
+                LogManager.Logger.LogInfo("destory: " + child.GetType());
+            }
+        }
+
     }
+
 }
