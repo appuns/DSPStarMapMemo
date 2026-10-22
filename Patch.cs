@@ -51,39 +51,51 @@ namespace DSPStarMapMemo
         {
             bool keyCheck = Input.GetKey(KeyCode.LeftControl);
             GameObject memoBase = tr.Find("memoBase").gameObject;
-            if (!keyCheck)
+            GameObject memoText = tr.Find("memoBase/memoText").gameObject;
+            if (keyCheck || !MemoPool.memoPool.ContainsKey(id) || !tr.Find("name-text").gameObject.activeSelf
+                || IsMemoEmpty(MemoPool.memoPool[id]))
             {
-                if (MemoPool.memoPool.ContainsKey(id) && tr.Find("name-text").gameObject.activeSelf)
+                //内容被清空后不能留下旧字形（例如省略号），显式清空并隐藏
+                memoText.GetComponent<Text>().text = "";
+                memoText.SetActive(false);
+                memoBase.SetActive(false);
+                return;
+            }
+            memoText.GetComponent<Text>().text = MemoPool.memoPool[id].desc;
+            memoText.SetActive(true);
+            for (int i = 0; i < 10; i++)
+            {
+                int signalIconId = MemoPool.memoPool[id].signalIconId[i];
+                GameObject icon = tr.Find("memoBase/icon" + i).gameObject;
+                if (signalIconId != 0)
                 {
-                    GameObject memoText = tr.Find("memoBase/memoText").gameObject;
-                    memoText.GetComponent<Text>().text = MemoPool.memoPool[id].desc;
-                    memoText.SetActive(true);
-                    for (int i = 0; i < 10; i++)
-                    {
-                        int signalIconId = MemoPool.memoPool[id].signalIconId[i];
-                        GameObject icon = tr.Find("memoBase/icon" + i).gameObject;
-                        if (signalIconId != 0)
-                        {
-                            icon.GetComponent<Image>().sprite = LDB.signals.IconSprite(signalIconId);
-                            icon.SetActive(true);
-                        }
-                        else
-                        {
-                            icon.SetActive(false);
-                        }
-                    }
-                    memoBase.transform.localPosition = tr.Find("name-text").localPosition;
-                    memoBase.SetActive(true);
+                    icon.GetComponent<Image>().sprite = LDB.signals.IconSprite(signalIconId);
+                    icon.SetActive(true);
                 }
                 else
                 {
-                    memoBase.SetActive(false);
+                    icon.SetActive(false);
                 }
             }
-            else
+            memoBase.transform.localPosition = tr.Find("name-text").localPosition;
+            memoBase.SetActive(true);
+        }
+
+        //文本为空且没有任何图标 → 视为空备忘录
+        private static bool IsMemoEmpty(MemoPool.Memo memo)
+        {
+            if (!string.IsNullOrWhiteSpace(memo.desc))
             {
-                memoBase.SetActive(false);
+                return false;
             }
+            for (int i = 0; i < 10; i++)
+            {
+                if (memo.signalIconId[i] != 0)
+                {
+                    return false;
+                }
+            }
+            return true;
         }
 
         //「イカロス」の位置調整
@@ -100,7 +112,10 @@ namespace DSPStarMapMemo
         [HarmonyPatch(typeof(UIStarDetail), "_OnOpen")]
         public static void UIStarDetail_OnOpen_Postfix(UIStarDetail __instance)
         {
-            UI.MemoWindowOpen(__instance.star.id);
+            if (UIGame.viewMode != EViewMode.Sail)
+            {
+                UI.MemoWindowOpen(__instance.star.id);
+            }
         }
 
         //情報ウインドウの表示 planet
@@ -108,7 +123,10 @@ namespace DSPStarMapMemo
         [HarmonyPatch(typeof(UIPlanetDetail), "_OnOpen")]
         public static void UIPlanetDetail_OnOpen_Postfix(UIPlanetDetail __instance)
         {
-            UI.MemoWindowOpen(__instance.planet.id);
+            if (UIGame.viewMode != EViewMode.Sail)
+            {
+                UI.MemoWindowOpen(__instance.planet.id);
+            }
         }
 
         //情報ウインドウの非表示
